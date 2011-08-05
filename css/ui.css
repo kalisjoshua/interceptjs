@@ -4,6 +4,9 @@ a:hover,
 a:visited {
     color: white;
     }
+a:hover {
+    text-decoration: none;
+    }
 
 body {
     background: #444444;
@@ -29,28 +32,27 @@ div#content_wrapper {
     div#content_wrapper a:active,
     div#content_wrapper a:hover,
     div#content_wrapper a:visited {
-        color: #deffcc;
+        color: #ad0068;
         }
 
 footer {
     }
     footer ul {
         }
-        footer ul li {}
+        footer ul li {
+            }
             footer ul li a {
                 }
 
 header {
-    padding: 1em;
+    padding: 1em 0px;
     }
     header h1 {
+        border-bottom: 1px solid #eb008d;
         margin: 0px;
         }
         header h1 a {
             text-decoration: none;
-            }
-        header h1 a:hover {
-            text-decoration: underline;
             }
 
 nav {
@@ -64,5 +66,7 @@ nav {
             margin: 0px 1em;
             }
             nav ul li a {
+                }
+            nav ul li a:hover {
                 }
 
