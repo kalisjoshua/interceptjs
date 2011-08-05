@@ -9,12 +9,13 @@
 <meta charset="utf-8" />
 <title>InterceptJS</title>
 <link rel="stylesheet" href="css/h5bp.css" />
+<link rel="stylesheet" href="css/ui.css" />
 </head>
 
 <body>
 <a name="top_of_page"></a>
-<p id="SkipToContent"><a href="#content" name="top_of_page">Skip to main content</a></p>
-<div id="wrapper">
+<a class="visuallyhidden" href="#content">skip navigation</a>
+<div class="clearfix" id="page_wrapper">
     <header role="banner">
         <h1><a href="index.htm">InterceptJS</a></h1>
     </header>
@@ -26,12 +27,28 @@
         </ul>
     </nav>
     
-    <section>
-        <article id="content" role="main">
-        </article>
-    </section>
+    <div class="clearfix" id="content_wrapper">
+        <section>
+            <article id="content" role="main">
+                <h2>principles</h2>
+                <ul>
+                    <li>small - nothing included that isn't necessary</li>
+                    <li>plug-able - accepts plugins for extensibility</li>
+                    <li>unobtrusive - no markup is needed by the library to function correctly</li>
+                </ul>
+            
+                <h2>use</h2>
+                <ul>
+                    <li>listen for click events</li>
+                    <li>links to same-domain-pages will be intercepted and handled</li>
+                    <li>configurable location for content loading</li>
+                </ul>
+            
+            </article>
+        </section>
+    </div>
     
-    <footer role="contentinfo">
+    <footer class="clearfix" role="contentinfo">
         <ul>
             <li><a href="//joshuakalis.com">joshuakalis.com</a></li>
             <li><a href="//johnbfair.com">johnbfair.com</a></li>
