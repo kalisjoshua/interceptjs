@@ -8,14 +8,6 @@ a:hover {
     text-decoration: none;
     }
 
-body {
-    background: #444444;
-    color: white;
-    margin: 0px;
-    padding: 0px;
-    text-align: center;
-    }
-
 div#page_wrapper {
     margin: 0px auto;
     position: relative;
@@ -54,6 +46,14 @@ header {
         header h1 a {
             text-decoration: none;
             }
+
+html {
+    background: #444444;
+    color: white;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+    }
 
 nav {
     }
