@@ -37,14 +37,14 @@ var Intercept = (function () {
       frag.className = "custom document fragment";
 
       if (html.childNodes) {
-        // implement later
-      } else {
-        frag.innerHTML = html.
-          replace(/.*?<body/, "").
-          replace(/<\/body>.*/, "").
-          replace(/<style.*?style>/gi, "").
-          replace(/<script.*?script>/gi, "");
+        html = html.innerHTML;
       }
+
+      frag.innerHTML = html.
+        replace(/.*?<body/, "").
+        replace(/<\/body>.*/, "").
+        replace(/<style.*?style>/gi, "").
+        replace(/<script.*?script>/gi, "");
 
       for (indx; indx < nodes.length; indx++) {
         if (/^#/i.test(nodes[indx].nodeName || result.length > 0)) {
@@ -52,12 +52,8 @@ var Intercept = (function () {
         }
 
         if (nodes[indx].id === config.wrapperID) {
-          nodes = nodes[indx].childNodes
-          indx = 0;
-          while (!regex.test(nodes[indx].nodeName) && indx++ < nodes.length) {}
           
-          // alert(nodes[indx].parentNode.innerHTML);
-          return nodes[indx].parentNode.innerHTML;
+          return nodes[indx].innerHTML;
         }
         
         if (nodes[indx].childNodes.length) {
@@ -138,11 +134,6 @@ var Intercept = (function () {
     return pageCache[key];
   };
 
-  api.config = function (userConfig) {
-    config = userConfig;
-    api.cache(window.location.href, findContent(document.body.innerHTML));
-  };
-
   api.request = function (settings) {
     try {
       var
@@ -161,8 +152,23 @@ var Intercept = (function () {
     }
   };
 
-  api.start = function (config) {
-    api.config(config);
+  api.start = function (userConfig) {
+    config = userConfig;
+
+    // cache the page requested since it is already in the DOM
+    api.cache(window.location.href, findContent(document.body));
+
+    if (window.location.hash.length && window.location.hash.slice(1) !== window.location.pathname) {
+      api.request({
+        complete: (function (href) {
+          return function (xhr) {
+            api.cache(href, findContent(xhr.responseText));
+            api.transition(href);
+          };
+        }(window.location.protocol + "//" + window.location.host + window.location.hash.slice(1))),
+        url: window.location.hash.slice(1)
+      });
+    }
 
     trapEvent(document.body, "click", localLinks);
   };
@@ -172,12 +178,19 @@ var Intercept = (function () {
   };
 
   api.transition = function (h) {
-    _(config.wrapperID).innerHTML = pageCache[h];
+    var
+      l = document.createElement("a");
+    
+    l.href = h;
+
+    window.location.hash = l.pathname;
+    _(config.wrapperID).innerHTML = pageCache[l.href];
   };
   
   // loading indicator
   // check for visiting a page without hash-path url
   // update url with hash-path for navigation (forward, backward)
+  // push state api
   // ignore links with defined rules
   
   return api;
