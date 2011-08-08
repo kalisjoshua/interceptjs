@@ -16,9 +16,9 @@ div#page_wrapper {
     }
 
 div#content_wrapper {
-    background: white;
+    background: #eb008d;
     color: #444444;
-    padding: 1em 2em;
+    padding: 3px;
     }
     div#content_wrapper a,
     div#content_wrapper a:active,
@@ -28,6 +28,7 @@ div#content_wrapper {
         }
 
 footer {
+    color: #eb008d !important;
     }
     footer ul {
         }
@@ -48,8 +49,7 @@ header {
             }
 
 html {
-    background: #444444;
-    color: white;
+    background: #adadad;
     margin: 0px;
     padding: 0px;
     text-align: center;
@@ -70,3 +70,7 @@ nav {
             nav ul li a:hover {
                 }
 
+section {
+    background: white;
+    padding: 1em 2em;
+    }
