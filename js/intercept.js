@@ -11,8 +11,8 @@ var Intercept = (function () {
     api = {},
     
     browserEvents = {
-      add: (typeof attachEvent !== "undefined") ? "attachEvent" : "addEventListener",
-      rem: (typeof detachEvent !== "undefined") ? "detachEvent" : "removeEventListener"
+      add:    (typeof attachEvent !== "undefined") ? "attachEvent" : "addEventListener",
+      remove: (typeof detachEvent !== "undefined") ? "detachEvent" : "removeEventListener"
     },
 
     config = {},
@@ -24,17 +24,47 @@ var Intercept = (function () {
       return function (element, eventType, fn) {
         element[handler](on + eventType, fn, false);
       };
-    }(browserEvents.rem)),
+    }(browserEvents.remove)),
 
-    findChild = function (parent, child) {
+    findContent = function (html) {
       var
+        frag = document.createElement("div"),
         indx = 0,
-        nodes = parent.childNodes,
-        regex = new RegExp(child, "i");
+        nodes = frag.childNodes,
+        regex = new RegExp(config.contentDOM, "i"),
+        result = "";
 
-      while (!regex.test(nodes[indx].nodeName) && indx++ < nodes.length) {}
+      frag.className = "custom document fragment";
 
-      return nodes[indx];
+      if (html.childNodes) {
+        // implement later
+      } else {
+        frag.innerHTML = html.
+          replace(/.*?<body/, "").
+          replace(/<\/body>.*/, "").
+          replace(/<style.*?style>/gi, "").
+          replace(/<script.*?script>/gi, "");
+      }
+
+      for (indx; indx < nodes.length; indx++) {
+        if (/^#/i.test(nodes[indx].nodeName || result.length > 0)) {
+          continue;
+        }
+
+        if (nodes[indx].id === config.wrapperID) {
+          nodes = nodes[indx].childNodes
+          indx = 0;
+          while (!regex.test(nodes[indx].nodeName) && indx++ < nodes.length) {}
+          
+          // alert(nodes[indx].parentNode.innerHTML);
+          return nodes[indx].parentNode.innerHTML;
+        }
+        
+        if (nodes[indx].childNodes.length) {
+          result = findContent(nodes[indx].innerHTML);
+        }
+      }
+      return result;
     },
     
     localLinks = function (e) {
@@ -51,7 +81,7 @@ var Intercept = (function () {
         api.request({
           complete: (function (href) {
             return function (xhr) {
-              api.cache(href, xhr.responseText);
+              api.cache(href, findContent(xhr.responseText));
               api.transition(href);
             };
           }(e.target.href)),
@@ -110,7 +140,7 @@ var Intercept = (function () {
 
   api.config = function (userConfig) {
     config = userConfig;
-    api.cache(window.location.href, findChild(_(config.wrapperID), config.contentDOM).innerHTML);
+    api.cache(window.location.href, findContent(document.body.innerHTML));
   };
 
   api.request = function (settings) {
@@ -145,12 +175,10 @@ var Intercept = (function () {
     _(config.wrapperID).innerHTML = pageCache[h];
   };
   
-  // register what element will hold the content returned from the server
-  // register what element to pull from the DOM returned by the server
-  // add event listeners to links on the page
-  // request the document from the server
+  // loading indicator
+  // check for visiting a page without hash-path url
+  // update url with hash-path for navigation (forward, backward)
   // ignore links with defined rules
-  // cache list/key-object store
   
   return api;
 }());
