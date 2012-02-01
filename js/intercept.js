@@ -43,6 +43,7 @@ var Intercept = (function () {
                 div = document.createElement("div");
                 div.className = "custom document fragment";
                 // div.title = html.replace(/.*?<title>(.*?)<\/title>.*/gim, "$1");
+
                 div.innerHTML = html.
                     replace(/\n/g, "~n~").
                     replace(/.*?<body>/i, "").
@@ -137,10 +138,25 @@ var Intercept = (function () {
         }(browserEvents.add));
         
     api.cache = function (key, obj, div) {
+        var
+            temp;
+
         if (obj) {
             if (div) {
                 // content already exists
-                obj = obj.cloneNode(true);
+                temp = [];
+                for (node in obj.childNodes) {
+                    Object.prototype.hasOwnProperty.call(obj.childNodes, node) && temp.push(obj.childNodes[node]);
+                }
+                
+                obj = document.createElement("div");
+                while (temp.length) {
+                    // obj.appendChild(temp.shift());
+                    if (typeof temp[0] !== "undefined") {
+                        alert(temp[0]);
+                    }
+                    temp.shift()
+                }
                 config.content_wrapper.innerHTML = "";
             }
             div = document.createElement("div");
@@ -207,6 +223,8 @@ var Intercept = (function () {
 
     api.transition = function (h, skipAnimation) {
         var
+            duration = 500,
+            frames = 24,
             indx = 0,
             nodes = api.cache();
 
@@ -223,10 +241,19 @@ var Intercept = (function () {
         }
 
         api.cache(h).style.display = "block";
+        api.cache(h).style.opacity = "0";
+
+        indx = 0;
+        while (indx++ < frames) {
+            (function (node, indx, time, opacity) {
+                setTimeout(function () {
+                    node.style.opacity = indx === frames ? 1 : indx * Math.floor(opacity * 100) / 100;
+                }, indx * time);
+            }(api.cache(h), indx, duration / frames, 1 / frames));
+        }
         
     };
     
-    // cache DOM objcets instead of innerHTML
     // loading indicator
     // update url with hash-path for navigation (forward, backward)
     // push state api
